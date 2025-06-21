@@ -3,7 +3,7 @@ import sys
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
-'''
+
 if len(sys.argv) < 2:
   print("Error: Missing prompt argument pos 1")
   exit(1)
@@ -21,9 +21,4 @@ print(content_response.text)
 if "--verbose" in sys.argv:
   print(f"User prompt: {prompt}")
   print(f"Prompt tokens: {content_response.usage_metadata.prompt_token_count}")
-  print(f"Response tokens: {content_response.usage_metadata.candidates_token_count}")'''
-
-from functions.get_files_info import get_files_info
-
-result = get_files_info("calculator", "pkg")
-print(result)
+  print(f"Response tokens: {content_response.usage_metadata.candidates_token_count}")
