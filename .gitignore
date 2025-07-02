@@ -1,4 +1,5 @@
 venv/*
+vend/*
 .env
 calculator/pkg/__pycache__/*
 functions/__pycache__/*
