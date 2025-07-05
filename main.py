@@ -3,6 +3,7 @@ import sys
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+from functions.call_function import call_function
 
 if len(sys.argv) < 2:
   print("Error: Missing prompt argument pos 1")
@@ -78,6 +79,7 @@ available_functions = types.Tool(
 )
 
 prompt = sys.argv[1]
+verbose = "--verbose" in sys.argv
 messages = [ types.Content(role="user", parts=[types.Part(text=prompt)]), ]
 system_prompt = """
 You are a helpful AI coding agent.
@@ -102,11 +104,17 @@ content_response = client.models.generate_content(
 
 if content_response.function_calls:
   for f_call in content_response.function_calls:
-    print(f"Calling function: {f_call.name}({f_call.args})")
+    result = call_function(f_call, verbose=verbose)
+    
+    if not result.parts[0].function_response.response:
+      raise Exception('Result missing parts')
+    
+    if verbose:
+      print(f"-> {result.parts[0].function_response.response}")
 else:
   print(content_response.text)
 
-if "--verbose" in sys.argv:
+if verbose:
   print(f"User prompt: {prompt}")
   print(f"Prompt tokens: {content_response.usage_metadata.prompt_token_count}")
   print(f"Response tokens: {content_response.usage_metadata.candidates_token_count}")
